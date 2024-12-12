@@ -1,2 +1,1 @@
-# scientific-calculator
-A repository for a scientific calculator project
+This repository is empty. Any task executed on it should be considered a new capability and needs to be created.
