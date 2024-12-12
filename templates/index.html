@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .calculator {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .calculator input, .calculator button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        .calculator button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .calculator button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Scientific Calculator</h1>
+        <input type="text" id="input1" placeholder="Enter first number">
+        <input type="text" id="input2" placeholder="Enter second number">
+        <button onclick="performOperation('add')">Add</button>
+        <button onclick="performOperation('subtract')">Subtract</button>
+        <button onclick="performOperation('multiply')">Multiply</button>
+        <button onclick="performOperation('divide')">Divide</button>
+        <button onclick="performOperation('complex_add')">Complex Add</button>
+        <button onclick="performOperation('complex_subtract')">Complex Subtract</button>
+        <button onclick="performOperation('complex_multiply')">Complex Multiply</button>
+        <button onclick="performOperation('complex_divide')">Complex Divide</button>
+        <input type="text" id="inputBase" placeholder="Enter base for logarithm">
+        <button onclick="performOperation('logarithm')">Logarithm</button>
+        <input type="text" id="inputData" placeholder="Enter data for statistics (comma separated)">
+        <button onclick="performOperation('mean')">Mean</button>
+        <button onclick="performOperation('median')">Median</button>
+        <button onclick="performOperation('standard_deviation')">Standard Deviation</button>
+        <h2>Result: <span id="result"></span></h2>
+    </div>
+    <script>
+        function performOperation(operation) {
+            let input1 = document.getElementById('input1').value;
+            let input2 = document.getElementById('input2').value;
+            let inputBase = document.getElementById('inputBase').value;
+            let inputData = document.getElementById('inputData').value;
+
+            let data = {};
+            if (operation.includes('complex')) {
+                data = { a: input1.split(',').map(Number), b: input2.split(',').map(Number) };
+            } else if (operation === 'logarithm') {
+                data = { a: Number(input1), base: Number(inputBase) };
+            } else if (['mean', 'median', 'standard_deviation'].includes(operation)) {
+                data = { data: inputData.split(',').map(Number) };
+            } else {
+                data = { a: Number(input1), b: Number(input2) };
+            }
+
+            fetch(`/${operation}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                document.getElementById('result').innerText = result.result;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
